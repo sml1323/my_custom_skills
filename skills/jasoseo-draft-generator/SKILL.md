@@ -9,10 +9,46 @@ description: Generate a grounded Korean self-introduction or cover-letter draft 
 
 Create a first-pass Korean self-introduction draft from three input buckets: previous letters, personal background, and target company materials. Generate a source bundle first, then map JD keywords to candidate evidence, and write the final draft to the requested `output/` path.
 
+## Expected Folder Layout
+
+Prefer this structure inside one application root:
+
+```text
+지원폴더/
+  자소서들/
+    *.md
+  my_background/          # or my_backgorund/
+    background.md
+    *.pdf
+  target_company/
+    jd.md
+    research.md
+  output/
+```
+
+Minimum viable input:
+- `target_company/jd.md`
+- one of `my_background/` or `my_backgorund/`
+- at least one source file from either `자소서들/` or background materials
+
+If the user has not organized files yet, tell them to create this structure first and name the expected files explicitly. Do not assume a random workspace layout is intentional.
+
+## Folder Discovery
+
+1. If the user explicitly names a folder or path such as `company2`, use that first.
+2. If the user does not provide a path, search the current workspace for candidate roots that contain:
+   - `target_company/`
+   - at least one of `자소서들/`, `my_background/`, or `my_backgorund/`
+3. Prefer the candidate that has all three directories.
+4. If exactly one candidate exists, use it without asking.
+5. If multiple plausible roots exist, ask one concise clarification question instead of guessing.
+6. If no candidate exists, tell the user the exact folder structure to create.
+
 ## Workflow
 
 1. Identify the root folder.
    Default to the user-provided application folder such as `company2`.
+   If no folder was provided, perform the discovery flow above before asking a follow-up.
    Expect these directories when available:
    - `자소서들/`: previous letters
    - `my_background/` or `my_backgorund/`: background notes and portfolio
@@ -25,7 +61,13 @@ Create a first-pass Korean self-introduction draft from three input buckets: pre
    python3 scripts/prepare_jasoseo_bundle.py /abs/path/to/company2
    ```
 
-   The script reads `.md`, `.txt`, and `.pdf`, creates `output/_jasoseo_source_bundle.md`, and suggests a final filename.
+   If the root is still ambiguous, run it from the workspace root without arguments:
+
+   ```bash
+   python3 scripts/prepare_jasoseo_bundle.py
+   ```
+
+   The script reads `.md`, `.txt`, and `.pdf`, creates `output/_jasoseo_source_bundle.md`, and suggests a final filename. It auto-discovers the application root when there is exactly one plausible candidate under the current working directory.
 
 3. Read the generated bundle and [references/writing-checklist.md](references/writing-checklist.md).
    Use previous letters for narrative patterns and proof sources, not verbatim reuse.
@@ -63,6 +105,8 @@ Create a first-pass Korean self-introduction draft from three input buckets: pre
 ## Missing Data Rules
 
 - If one folder is missing, continue with the available sources and mention the gap briefly.
+- If `target_company/` is missing, stop and tell the user to add `jd.md` first.
+- If the layout itself is missing or inconsistent, show the expected tree and name the missing folders explicitly.
 - If PDF extraction fails, continue with markdown sources first. Do not block the draft on the portfolio PDF alone.
 - If company name or role cannot be inferred confidently, use a conservative placeholder filename and state that assumption.
 

@@ -3,6 +3,7 @@
 Bundle personal, company, and prior application materials into one markdown file.
 
 Usage:
+    python3 scripts/prepare_jasoseo_bundle.py
     python3 scripts/prepare_jasoseo_bundle.py /path/to/company2
     python3 scripts/prepare_jasoseo_bundle.py /path/to/company2 --output /tmp/bundle.md
 """
@@ -48,7 +49,12 @@ class SourceEntry:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("root", type=Path, help="Application folder root such as company2")
+    parser.add_argument(
+        "root",
+        nargs="?",
+        type=Path,
+        help="Application folder root such as company2. If omitted, auto-discover under the current directory.",
+    )
     parser.add_argument(
         "--output",
         type=Path,
@@ -63,6 +69,73 @@ def find_group_dir(root: Path, candidates: list[str]) -> Path | None:
         if path.is_dir():
             return path
     return None
+
+
+def evaluate_root(root: Path) -> tuple[int, int]:
+    has_target = 1 if find_group_dir(root, GROUP_CANDIDATES["target_company"]) else 0
+    optional_count = sum(
+        1 for key in ("previous_letters", "background") if find_group_dir(root, GROUP_CANDIDATES[key])
+    )
+    return has_target, optional_count
+
+
+def discover_candidate_roots(search_root: Path) -> list[Path]:
+    candidates: list[tuple[int, int, Path]] = []
+    seen: set[Path] = set()
+
+    for candidate in [search_root, *search_root.rglob("*")]:
+        if not candidate.is_dir():
+            continue
+        score = evaluate_root(candidate)
+        if score[0] == 0 or score[1] == 0:
+            continue
+        resolved = candidate.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        candidates.append((score[0], score[1], resolved))
+
+    candidates.sort(key=lambda item: (-item[0], -item[1], len(str(item[2]))))
+    return [path for _, _, path in candidates]
+
+
+def resolve_root(root_arg: Path | None) -> Path:
+    if root_arg is None:
+        search_root = Path.cwd().resolve()
+        candidates = discover_candidate_roots(search_root)
+        if not candidates:
+            raise SystemExit(
+                "No application root found under the current directory. Expected a folder containing "
+                "`target_company/` and at least one of `자소서들/`, `my_background/`, or `my_backgorund/`."
+            )
+        if len(candidates) > 1:
+            formatted = "\n".join(f"- {path}" for path in candidates)
+            raise SystemExit(
+                "Multiple candidate application roots found. Pass one explicit path.\n"
+                f"{formatted}"
+            )
+        return candidates[0]
+
+    root = root_arg.expanduser().resolve()
+    if not root.exists():
+        raise SystemExit(f"Root directory not found: {root}")
+    if not root.is_dir():
+        raise SystemExit(f"Root path is not a directory: {root}")
+
+    score = evaluate_root(root)
+    if score[0] == 1 and score[1] >= 1:
+        return root
+
+    candidates = discover_candidate_roots(root)
+    if not candidates:
+        return root
+    if len(candidates) == 1:
+        return candidates[0]
+    formatted = "\n".join(f"- {path}" for path in candidates)
+    raise SystemExit(
+        "The provided path is not a unique application root. Pass the exact folder to use.\n"
+        f"{formatted}"
+    )
 
 
 def normalize_text(text: str) -> str:
@@ -281,9 +354,7 @@ def render_bundle(
 
 def main() -> int:
     args = parse_args()
-    root = args.root.expanduser().resolve()
-    if not root.is_dir():
-        raise SystemExit(f"Root directory not found: {root}")
+    root = resolve_root(args.root)
 
     output_path = args.output.expanduser().resolve() if args.output else root / "output" / "_jasoseo_source_bundle.md"
     output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "YouTube to Obsidian"
+  short_description: "YouTube 영상을 Obsidian 프론트매터 노트로 정리"
+  default_prompt: "Use $summarize-youtube-to-obsidian to turn this YouTube URL into an Obsidian note with YAML frontmatter and GitHub-compatible callouts."

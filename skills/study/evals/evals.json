@@ -1,0 +1,48 @@
+{
+  "skill_name": "study",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/study concept langgraph",
+      "expected_output": "study/langgraph/ 폴더 생성, plan.md 생성 (Phase/Task 체크박스), references/official-docs.md 생성, Task 1.1 개념 설명 + 예제 코드 제시 + 실습 과제 출제",
+      "files": [],
+      "expectations": [
+        "study/langgraph/plan.md 파일이 생성됨",
+        "plan.md에 Phase와 Task 체크박스가 포함됨 (- [ ] Task 형식)",
+        "study/langgraph/references/ 디렉토리가 생성됨",
+        "context7 또는 WebSearch로 공식 문서를 참조함",
+        "Task 1.1의 개념을 한국어로 설명함",
+        "실행 가능한 예제 코드를 보여줌",
+        "사용자에게 실습 과제를 제시하고 질문하라고 안내함",
+        "모든 자료를 한번에 덤프하지 않고 Task 1.1만 진행함"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/study codebase src/agent/",
+      "expected_output": "study/agent/ 폴더 생성, 코드 분석 결과 포함된 plan.md, code-overview.md 생성, Task 1.1 코드 구조 설명 시작",
+      "files": [],
+      "expectations": [
+        "src/agent/ 경로의 파일들을 실제로 읽고 분석함",
+        "study/{topic}/plan.md가 생성되고 모드가 Codebase로 표시됨",
+        "study/{topic}/references/code-overview.md가 생성됨",
+        "Phase 1이 코드 구조 파악 관련 task들로 구성됨",
+        "기존 코드를 발췌하여 인라인 주석으로 설명함",
+        "Task 1.1만 진행하고 나머지는 덤프하지 않음",
+        "50 파일 / 10k 라인 제한을 체크함"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/study continue",
+      "expected_output": "기존 study/ 폴더의 plan.md를 읽고 미완료 task부터 재개",
+      "files": [],
+      "expectations": [
+        "study/ 디렉토리를 스캔하여 기존 세션을 찾음",
+        "plan.md의 체크박스 상태를 읽음",
+        "첫 번째 미완료 task (- [ ])를 찾아서 재개함",
+        "study/ 폴더가 없으면 안내 메시지를 출력함"
+      ]
+    }
+  ]
+}

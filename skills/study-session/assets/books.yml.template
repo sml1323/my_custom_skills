@@ -1,0 +1,70 @@
+# books.yml — Study session book registry
+#
+# Lives at ~/study-journal/books.yml
+# The study-session skill maintains this file.
+# You can hand-edit paths, types, and parts; the skill preserves manual edits.
+
+books:
+
+  # Methodology book — internalize a method, apply to outside material.
+  arq:
+    title: Asking the Right Questions
+    authors: M. Neil Browne, Stuart M. Keeley
+    edition: 12th
+    path: ~/wiki/tmp_books/arq.pdf
+    format: pdf                # set to epub-pending-conversion if EPUB; convert via scripts/convert-epub.sh
+    type: methodology
+    total_pages: 270            # approximate
+    printed_page_offset: -4     # PDF page minus printed page (front matter)
+    current_chapter: 1
+    chapter_status: {}
+    chapter_metrics: {}
+    review_queue: []
+
+  # Multi-part book with different types per part.
+  polya:
+    title: How to Solve It — A New Aspect of Mathematical Method
+    authors: George Polya
+    path: ~/wiki/tmp_books/polya.pdf
+    format: pdf
+    parts:
+      - id: I
+        title: In the Classroom
+        type: methodology
+        pages: 1-36
+      - id: II
+        title: Heuristic (Dictionary)
+        type: reference
+        pages: 37-150
+      - id: III
+        title: Problems, Hints, Solutions
+        type: problem-driven
+        pages: 151-end
+    total_pages: 250
+    printed_page_offset: -10    # rough; verified in setup
+    current_chapter: I
+    chapter_status: {}
+    chapter_metrics: {}
+    review_queue: []
+
+  # Conceptual textbook — large volume, sequential derivations, chapter-split via pages range.
+  feynman-vol-1:
+    title: The Feynman Lectures on Physics, Volume I (Mechanics, Radiation, Heat)
+    authors: Richard P. Feynman
+    edition: New Millennium
+    path: ~/wiki/tmp_books/feynman-vol-1.pdf
+    format: pdf
+    type: conceptual
+    total_pages: 700            # approximate
+    printed_page_offset: -16
+    chapters_index:
+      - { id: 1, title: "Atoms in Motion", pages: 1-15 }
+      - { id: 2, title: "Basic Physics", pages: 16-30 }
+      # ... more chapters
+    current_chapter: 1
+    chapter_status: {}
+    chapter_metrics: {}
+    review_queue: []
+
+# Global review queue — chapters with spaced retrieval due
+review_queue: []

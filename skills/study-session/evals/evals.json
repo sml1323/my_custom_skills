@@ -1,0 +1,26 @@
+{
+  "skill_name": "study-session",
+  "evals": [
+    {
+      "id": 0,
+      "name": "cold-start-arq-ch1",
+      "prompt": "ARQ Ch.1부터 같이 공부하고 싶어. 이 책으로 비판적 사고 훈련을 시작하려고 해. 책 파일은 ~/wiki/tmp_books/ 에 'Asking the Right Questions ... .epub' 라는 이름으로 있어.\n\nNote for evaluator: For this evaluation run, treat the study journal root as `${EVAL_OUTPUT_DIR}/study-journal/` (i.e., create files inside the evaluation output directory, not the user's real home). The book PDF/EPUB does not need to be opened — simulate the chapter content if needed; the test is about whether the skill correctly bootstraps the journal, classifies the book, runs Phase 1 plan moves with verbatim prompts, and writes the chapter note. Generate plausible PKA/prediction/goal_question answers as if you were the user, so the session can proceed past Phase 1.",
+      "expected_output": "Skill detects missing study-journal, bootstraps the directory layout, registers ARQ in books.yml as type=methodology, surfaces EPUB→PDF conversion guidance (without auto-installing tools), enters plan mode, asks the verbatim PKA-dump prompt + prediction prompt + goal_question prompt (translated to Korean is fine), generates 3-5 expectations and 2-3 misconceptions, and writes a Phase 1 chapter note at study-journal/books/arq/ch-01-*.md. The session should NOT begin Phase 2 reading without first completing Phase 1.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "mid-stream-resume",
+      "prompt": "오늘 학습 시작\n\nNote for evaluator: A pre-existing study-journal fixture is provided. Copy the contents of `${SKILL_PATH}/evals/fixtures/mid-stream/` into `${EVAL_OUTPUT_DIR}/study-journal/` before processing the prompt. The fixture shows ARQ Ch.1-3 complete, Ch.4 phase-2-complete (read but not calibrated) from a session 2 days ago. Today's date is 2026-04-28. Proceed as if you (acting as the user) are returning after the delay. Generate plausible user answers to drive the session past calibrate-mode prompts so we can see whether the skill correctly enters Phase 3 calibrate, runs closed-book recall, captures confidence, and computes the gap.",
+      "expected_output": "Skill reads books.yml, identifies that Ch.4 is phase-2-complete with a 2-day delay since Phase 2, recognizes Phase 3 calibrate is due. Runs the calibrate sequence in order: confidence_check (0-100) BEFORE closed_book_recall, then gap_calibration comparing recall to chapter expectations from the existing chapter note, computes confidence-accuracy gap. Asks for Feynman-style explanation. Asks for self-test generation. Updates the chapter note Phase 3 section, marks status as phase-3-complete (or phase-3-pending if the user response was incomplete). Updates books.yml chapter_metrics and review_queue. Does NOT skip directly to Ch.5 without completing Ch.4 calibration.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "polya-standalone-problem",
+      "prompt": "이 문제 같이 풀어보자:\n\n'A man walks at a constant speed v from point A to point B, a distance d. He then immediately walks back from B to A at speed 2v. What is his average speed for the entire round trip?'\n\nNote for evaluator: This is an ad-hoc Polya-style problem, not a book chapter. The skill should handle standalone problems without requiring book context. Treat the study journal root as `${EVAL_OUTPUT_DIR}/study-journal/`. Bootstrap if missing. Generate plausible user answers to drive the session through Polya 4 steps; for the Plan step, suggest 'use a variable for time' as the user's strategy; for Carry Out, naive answer is (v+2v)/2 = 1.5v which is WRONG, so let the user initially propose the wrong answer, then have them realize the harmonic mean correction (correct answer is 4v/3). This tests whether the skill catches the incorrect schema, runs Newman analysis on the failed first attempt, and the Look-Back step extracts the deep-structure principle (harmonic mean for rates over equal distances).",
+      "expected_output": "Skill detects this as a standalone problem (not a book chapter). Bootstraps study-journal if missing. Invokes Polya 4-step verbatim: Understand (restate, given, goal, conditions), Plan (similar problems, named strategy), Carry Out (with Schoenfeld 3-question sticky at every step transition), Look Back (deep structure, principle name). When user produces incorrect first attempt (1.5v from arithmetic mean), skill does NOT immediately correct — instead invokes Newman 5-stage walk-back to identify the failed stage (Transformation: chose arithmetic mean schema, should be harmonic mean for rates over equal distances). Logs full polya_logs entry with hint_level, failed_attempts (productive failure record), and look_back identifying 'harmonic mean for rates over equal distances' as the deep structure. Saves to study-journal/standalone/problems/2026-04-28-average-round-trip-speed.md.",
+      "files": []
+    }
+  ]
+}

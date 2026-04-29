@@ -1,0 +1,54 @@
+books:
+  arq:
+    title: Asking the Right Questions
+    authors: M. Neil Browne, Stuart M. Keeley
+    edition: 12th
+    path: ~/wiki/tmp_books/arq.pdf
+    format: pdf
+    type: methodology
+    total_pages: 270
+    printed_page_offset: -4
+    current_chapter: 4
+    chapter_status:
+      1: complete
+      2: complete
+      3: complete
+      4: phase-2-complete
+    chapter_metrics:
+      1:
+        closed_book_coverage: 0.70
+        confidence_self_report: 75
+        confidence_accuracy_gap: 5
+        hint_levels: [0, 1, 0]
+        avg_hint_level: 0.33
+        avg_answer_length: 42
+        transfer_attempt: success
+        session_count: 2
+        session_health: { hint_abuse: false, illusion: false, surface: false, struggle_skip: false, form_fatigue: false, echo: false }
+      2:
+        closed_book_coverage: 0.60
+        confidence_self_report: 70
+        confidence_accuracy_gap: 10
+        hint_levels: [0, 1, 1]
+        avg_hint_level: 0.67
+        avg_answer_length: 38
+        transfer_attempt: partial
+        session_count: 2
+        session_health: { hint_abuse: false, illusion: false, surface: false, struggle_skip: false, form_fatigue: false, echo: false }
+      3:
+        closed_book_coverage: 0.65
+        confidence_self_report: 80
+        confidence_accuracy_gap: 15
+        hint_levels: [0, 0, 1]
+        avg_hint_level: 0.33
+        avg_answer_length: 44
+        transfer_attempt: success
+        session_count: 2
+        session_health: { hint_abuse: false, illusion: false, surface: false, struggle_skip: false, form_fatigue: false, echo: false }
+    review_queue:
+      - { chapter: 1, due: 2026-04-29, type: 1w }
+      - { chapter: 2, due: 2026-05-02, type: 1w }
+      - { chapter: 3, due: 2026-05-04, type: 1w }
+
+review_queue:
+  - { book: arq, chapter: 1, due: 2026-04-29, type: 1w }
